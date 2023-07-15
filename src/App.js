@@ -1,41 +1,109 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-import Login from './components/Login/Login';
-import Home from './components/Home/Home';
-import MainHeader from './components/MainHeader/MainHeader';
+const OrderForm = () => {
+  const [tableNumber, setTableNumber] = useState('');
+  const [orderId, setOrderId] = useState('');
+  const [price, setPrice] = useState('');
+  const [meal, setMeal] = useState('');
+  const [submittedOrder, setSubmittedOrder] = useState(null);
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const handleTableNumberChange = (event) => {
+    setTableNumber(event.target.value);
+  };
+  
 
-  useEffect(() => {
-    const storedUserLoggedInInformation = localStorage.getItem('isLoggedIn');
-
-    if (storedUserLoggedInInformation === '1') {
-      setIsLoggedIn(true);
-    }
-  }, []);
-
-  const loginHandler = (email, password) => {
-    // We should of course check email and password
-    // But it's just a dummy/ demo anyways
-    localStorage.setItem('isLoggedIn', '1');
-    setIsLoggedIn(true);
+  const handleOrderIdChange = (event) => {
+    setOrderId(event.target.value);
   };
 
-  const logoutHandler = () => {
-    localStorage.removeItem('isLoggedIn');
-    setIsLoggedIn(false);
+  const handlePriceChange = (event) => {
+    setPrice(event.target.value);
+  };
+
+  const handleMealChange = (event) => {
+    setMeal(event.target.value);
+  };
+
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+
+    // Create an order object using the collected data
+    const order = {
+      tableNumber: tableNumber,
+      orderId: orderId,
+      price: price,
+      meal: meal
+    };
+
+    // Set the submitted order in state
+    setSubmittedOrder(order);
+
+    // Reset the form
+    setTableNumber('');
+    setOrderId('');
+    setPrice('');
+    setMeal('');
   };
 
   return (
-    <React.Fragment>
-      <MainHeader isAuthenticated={isLoggedIn} onLogout={logoutHandler} />
-      <main>
-        {!isLoggedIn && <Login onLogin={loginHandler} />}
-        {isLoggedIn && <Home onLogout={logoutHandler} />}
-      </main>
-    </React.Fragment>
-  );
-}
+    <div>
+      <h1>Restaurant Order Form</h1>
+      <form onSubmit={handleFormSubmit}>
+        <div>
+          <label htmlFor="tableNumber">Table Number:</label>
+          <select
+            id="tableNumber"
+            value={tableNumber}
+            onChange={handleTableNumberChange}
+          >
+            <option value="">Select table number</option>
+            <option value="1">Table 1</option>
+            <option value="2">Table 2</option>
+            <option value="3">Table 3</option>
+            <option value="4">Table 4</option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="orderId">Order ID:</label>
+          <input
+            type="text"
+            id="orderId"
+            value={orderId}
+            onChange={handleOrderIdChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="price">Price:</label>
+          <input
+            type="text"
+            id="price"
+            value={price}
+            onChange={handlePriceChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="meal">Meal:</label>
+          <input
+            type="text"
+            id="meal"
+            value={meal}
+            onChange={handleMealChange}
+          />
+        </div>
+        <button type="submit">Submit Order</button>
+      </form>
 
-export default App;
+      {submittedOrder && (
+        <div>
+          <h2>Submitted Order</h2>
+          <p>Table Number: {submittedOrder.tableNumber}</p>
+          <p>Order ID: {submittedOrder.orderId}</p>
+          <p>Price: {submittedOrder.price}</p>
+          <p>Meal: {submittedOrder.meal}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default OrderForm;
